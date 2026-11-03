@@ -1,8 +1,8 @@
-target/
-data/
-uploads/
+/target/
+/data/
+/uploads/
 *.log
 .idea/
 .vscode/
 *.iml
-config/
+/config/
