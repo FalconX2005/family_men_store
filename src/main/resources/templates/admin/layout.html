@@ -20,6 +20,7 @@
         Buyurtmalar <span class="badge" th:if="${newOrders > 0}" th:text="${newOrders}"></span>
       </a>
       <a th:href="@{/admin/products}" th:classappend="${active == 'products'} ? 'active'">Mahsulotlar</a>
+      <a th:href="@{/admin/site}" th:classappend="${active == 'site'} ? 'active'">Sayt dizayni</a>
       <a th:href="@{/}" target="_blank">Saytni ochish ↗</a>
       <form th:action="@{/admin/logout}" method="post"><button type="submit">Chiqish</button></form>
     </nav>

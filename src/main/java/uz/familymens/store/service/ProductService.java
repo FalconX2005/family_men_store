@@ -20,10 +20,12 @@ public class ProductService {
 
     private final ProductRepository repository;
     private final FileStorageService fileStorage;
+    private final SiteSettingsService site;
 
-    public ProductService(ProductRepository repository, FileStorageService fileStorage) {
+    public ProductService(ProductRepository repository, FileStorageService fileStorage, SiteSettingsService site) {
         this.repository = repository;
         this.fileStorage = fileStorage;
+        this.site = site;
     }
 
     public Page<Product> catalog(String brand, Category category, int page) {
@@ -48,7 +50,9 @@ public class ProductService {
     public Map<String, String> brandCovers() {
         Map<String, String> covers = new LinkedHashMap<>();
         for (String b : Brands.MAIN) {
-            covers.put(b, repository.findFirstByActiveTrueAndBrandOrderByPublishedAtDesc(b)
+            String custom = site.image("brand." + b);
+            covers.put(b, custom != null ? custom
+                    : repository.findFirstByActiveTrueAndBrandOrderByPublishedAtDesc(b)
                     .map(Product::getImageUrl).orElse(null));
         }
         return covers;

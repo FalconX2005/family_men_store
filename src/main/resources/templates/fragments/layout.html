@@ -18,7 +18,7 @@
 
 <!-- ===== Topbar + Header ===== -->
 <th:block th:fragment="header">
-  <div class="topbar"><span th:text="#{topbar}"></span></div>
+  <div class="topbar"><span th:text="${site.text('topbar', lang)} ?: #{topbar}"></span></div>
   <header class="header" id="header">
     <div class="container header__inner">
       <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Menu" type="button">
@@ -76,7 +76,7 @@
   <div class="container">
     <div class="footer__cta reveal">
       <p class="eyebrow eyebrow--gold" th:text="#{footer.eyebrow}"></p>
-      <h2 class="footer__title" th:text="#{footer.title}"></h2>
+      <h2 class="footer__title" th:text="${site.text('footer.title', lang)} ?: #{footer.title}"></h2>
       <div class="footer__links">
         <a class="btn btn--gold" th:href="${store.adminUrl()}" target="_blank" rel="noopener" th:text="'@' + ${store.telegramAdmin}"></a>
         <a class="btn btn--outline" th:href="${store.channelUrl()}" target="_blank" rel="noopener" th:text="#{social.tg}"></a>

@@ -609,3 +609,19 @@ a.filter { display: inline-block; }
 }
 
 .inline-form input[type=date] { font: inherit; font-size: 14px; padding: 12px 14px; border: 1px solid var(--line); background: #fff; flex: 1; }
+
+/* Admin: sayt dizayni */
+.design-hint { margin: -14px 0 24px; font-size: 13px; }
+.design-section { margin-bottom: 24px; }
+.design-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px; }
+.design-image__label { font-size: 12.5px; color: var(--stone); margin-bottom: 10px; min-height: 34px; }
+.design-image__preview { aspect-ratio: 4 / 3; background: var(--cream); display: grid; place-items: center; overflow: hidden; margin-bottom: 10px; font-size: 12px; }
+.design-image__preview img { width: 100%; height: 100%; object-fit: cover; }
+.design-image input[type=file] { font-size: 12px; width: 100%; margin-bottom: 8px; }
+.design-text { padding: 16px 0; border-bottom: 1px solid var(--line); }
+.design-text:last-child { border-bottom: 0; }
+.design-text__label { font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+.design-text .f { margin-bottom: 0; }
+.f-row--3 { grid-template-columns: repeat(3, 1fr); }
+.design-save { position: sticky; bottom: 0; background: #f3f1ec; padding: 16px 0; text-align: right; border-top: 1px solid var(--line); }
+@media (max-width: 860px) { .f-row--3 { grid-template-columns: 1fr; } }

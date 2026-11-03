@@ -105,13 +105,13 @@ server {
     gzip_types text/css application/javascript image/svg+xml;
 
     location /uploads/ {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:8150;
         expires 30d;
         add_header Cache-Control "public";
     }
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:8150;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -141,10 +141,10 @@ chmod +x /etc/cron.daily/family-store-backup
 
 log "Ilova ishga tushishini kutish"
 for i in $(seq 1 60); do
-  curl -s -o /dev/null http://127.0.0.1:8080/ && break
+  curl -s -o /dev/null http://127.0.0.1:8150/ && break
   sleep 2
 done
-if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/ | grep -q 200; then
+if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8150/ | grep -q 200; then
   IP=$(curl -s -4 https://ifconfig.me || echo SERVER_IP)
   echo
   echo "✅ Tayyor!  Sayt: ${DOMAIN:+https://$DOMAIN}${DOMAIN:-http://$IP}"

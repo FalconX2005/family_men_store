@@ -7,16 +7,16 @@
 <!-- Hero -->
 <section class="hero">
   <div class="hero__media">
-    <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=2000&q=80" alt="" data-nofallback>
+    <img th:src="${site.image('hero')} ?: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=2000&q=80'" alt="" data-nofallback>
   </div>
   <div class="hero__overlay"></div>
   <div class="container hero__content">
-    <p class="eyebrow reveal" th:text="#{hero.eyebrow}"></p>
+    <p class="eyebrow reveal" th:text="${site.text('hero.eyebrow', lang)} ?: #{hero.eyebrow}"></p>
     <h1 class="hero__title reveal">
-      <span th:text="#{hero.title1}"></span><br>
-      <em th:text="#{hero.title2}"></em> <span th:text="#{hero.title3}"></span>
+      <span th:text="${site.text('hero.title1', lang)} ?: #{hero.title1}"></span><br>
+      <em th:text="${site.text('hero.title2', lang)} ?: #{hero.title2}"></em> <span th:text="${site.text('hero.title3', lang)} ?: #{hero.title3}"></span>
     </h1>
-    <p class="hero__text reveal" th:text="#{hero.text}"></p>
+    <p class="hero__text reveal" th:text="${site.text('hero.text', lang)} ?: #{hero.text}"></p>
     <div class="hero__cta reveal">
       <a href="#collection" class="btn btn--light" th:text="#{hero.btn}"></a>
       <a href="#about" class="link-line" th:text="#{hero.link}"></a>
@@ -107,17 +107,17 @@
 <!-- About -->
 <section class="editorial" id="about">
   <div class="editorial__media reveal">
-    <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=80" alt="" loading="lazy" data-nofallback>
+    <img th:src="${site.image('about')} ?: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=80'" alt="" loading="lazy" data-nofallback>
   </div>
   <div class="editorial__content reveal">
     <p class="eyebrow eyebrow--gold" th:text="#{about.eyebrow}"></p>
-    <h2 class="editorial__title" th:text="#{about.title}"></h2>
-    <p th:text="#{about.text1}"></p>
-    <p th:text="#{about.text2}"></p>
+    <h2 class="editorial__title" th:text="${site.text('about.title', lang)} ?: #{about.title}"></h2>
+    <p th:text="${site.text('about.text1', lang)} ?: #{about.text1}"></p>
+    <p th:text="${site.text('about.text2', lang)} ?: #{about.text2}"></p>
     <div class="stats">
-      <div><strong>10K+</strong><span th:text="#{stat1}"></span></div>
-      <div><strong>3</strong><span th:text="#{stat2}"></span></div>
-      <div><strong th:text="${store.deliveryDays}">7–15</strong><span th:text="#{stat3}"></span></div>
+      <div><strong th:text="${site.value('stat1.value')} ?: '10K+'">10K+</strong><span th:text="#{stat1}"></span></div>
+      <div><strong th:text="${site.value('stat2.value')} ?: '3'">3</strong><span th:text="#{stat2}"></span></div>
+      <div><strong th:text="${site.value('stat3.value')} ?: ${store.deliveryDays}">7–15</strong><span th:text="#{stat3}"></span></div>
     </div>
   </div>
 </section>

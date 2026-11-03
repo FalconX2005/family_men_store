@@ -37,6 +37,19 @@
     });
   }
 
+  /* Admin: sayt dizayni — tanlangan rasmni darhol ko'rsatish */
+  $$("input[type=file][data-preview]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const f = input.files[0];
+      const box = input.parentElement.querySelector(".design-image__preview");
+      if (!f || !box) return;
+      box.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(f);
+      box.appendChild(img);
+    });
+  });
+
   /* Mobil menyu */
   const toggle = $("#menuToggle");
   const nav = $("#nav");

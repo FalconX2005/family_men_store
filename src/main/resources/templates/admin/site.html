@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="uz" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Sayt dizayni')}"></head>
+<body class="admin">
+<header th:replace="~{admin/layout :: nav('site')}"></header>
+
+<main class="container admin-main">
+  <th:block th:replace="~{admin/layout :: flash}"></th:block>
+  <div class="flash flash--error" th:if="${error != null}" th:text="${error}"></div>
+
+  <div class="admin-head">
+    <h1>Sayt dizayni</h1>
+    <a th:href="@{/}" target="_blank" class="link-line">Saytni ko'rish ↗</a>
+  </div>
+  <p class="muted design-hint">Bo'sh qoldirilgan maydon uchun standart matn yoki rasm ishlatiladi.
+    Rasmlar: JPG, PNG yoki WEBP, 10 MB gacha.</p>
+
+  <form th:action="@{/admin/site}" method="post" enctype="multipart/form-data" class="admin-form">
+
+    <!-- Rasmlar -->
+    <section class="card design-section">
+      <h3>Rasmlar</h3>
+      <div class="design-images">
+        <div class="design-image" th:each="img : ${images}" th:with="current=${values.get(img.key())}">
+          <p class="design-image__label" th:text="${img.label()}"></p>
+          <div class="design-image__preview">
+            <img th:if="${current != null}" th:src="${current}" alt="" data-nofallback>
+            <span th:unless="${current != null}" class="muted">Standart rasm</span>
+          </div>
+          <input type="file" th:name="'f_' + ${img.key()}" accept="image/jpeg,image/png,image/webp" data-preview>
+          <label class="f f--check" th:if="${current != null}">
+            <input type="checkbox" th:name="'r_' + ${img.key()}" value="1"> Standartga qaytarish
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ikki tilli matnlar -->
+    <section class="card design-section">
+      <h3>Matnlar</h3>
+      <div class="design-text" th:each="f : ${texts}">
+        <p class="design-text__label" th:text="${f.label()}"></p>
+        <div class="f-row">
+          <label class="f" th:each="l : ${langs}">
+            <span th:text="${l == 'uz'} ? 'O\'zbekcha' : 'Русский'"></span>
+            <textarea th:if="${f.multiline()}" rows="3" maxlength="1000"
+                      th:name="'t_' + ${f.key()} + '.' + ${l}"
+                      th:text="${values.get(f.key() + '.' + l)}"
+                      th:placeholder="#{${f.key()}}"></textarea>
+            <input th:unless="${f.multiline()}" maxlength="1000"
+                   th:name="'t_' + ${f.key()} + '.' + ${l}"
+                   th:value="${values.get(f.key() + '.' + l)}"
+                   th:placeholder="#{${f.key()}}">
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistika -->
+    <section class="card design-section">
+      <h3>Statistika ("Qanday ishlaymiz" bo'limi)</h3>
+      <div class="f-row f-row--3">
+        <label class="f" th:each="f : ${plainValues}">
+          <span th:text="${f.label()}"></span>
+          <input maxlength="20" th:name="'t_' + ${f.key()}" th:value="${values.get(f.key())}">
+        </label>
+      </div>
+    </section>
+
+    <div class="design-save">
+      <button type="submit" class="btn btn--dark">Saqlash</button>
+    </div>
+  </form>
+</main>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

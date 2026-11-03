@@ -13,8 +13,8 @@ Nike, Adidas, Puma: AQSH, Turkiya va Angliyadan original kiyim va poyabzal **buy
 mvn spring-boot:run
 ```
 
-- Sayt: http://localhost:8080
-- Admin panel: http://localhost:8080/admin (login `admin` / `admin123`, albatta o'zgartiring)
+- Sayt: http://localhost:8150
+- Admin panel: http://localhost:8150/admin (login `admin` / `admin123`, albatta o'zgartiring)
 
 Birinchi ishga tushganda sayt Telegram kanalning oxirgi ~100 postini avtomatik yuklaydi. Bu 1–2 daqiqa davom etadi.
 
