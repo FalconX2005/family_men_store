@@ -91,3 +91,27 @@ src/main/resources/
 mvn clean package
 java -jar target/family-mens-store-1.0.0.jar
 ```
+
+## Serverga joylash (Oracle Cloud Free Tier / istalgan Ubuntu)
+
+1. Oracle Cloud'da **Ubuntu 24.04** server yarating: *VM.Standard.A1.Flex*, 2 OCPU, 12 GB RAM.
+2. **Security List** da 80 va 443 TCP portlarini oching.
+3. Kompyuterdan (Git Bash) yuboring:
+   ```bash
+   SSH_KEY=~/oracle.key SERVER=1.2.3.4 ADMIN_PASSWORD='kuchli-parol' \
+   BOT_TOKEN=... CHAT_ID=... DOMAIN=familystore.duckdns.org EMAIL=you@mail.com \
+   bash deploy/deploy.sh
+   ```
+   `DOMAIN` berilmasa, sayt `http://SERVER_IP` orqali ochiladi.
+4. Keyingi yangilashlar uchun `SSH_KEY=... SERVER=... bash deploy/deploy.sh` yetarli. Serverdagi sozlamalar, baza va rasmlar saqlanib qoladi.
+
+**`deploy/setup.sh` serverda quyidagilarni qiladi:**
+- Java 21 va Nginx'ni o'rnatadi, firewall'ni sozlaydi.
+- systemd servisini yaratadi: alohida foydalanuvchi, qayta yuklanganda o'zi ishga tushadi.
+- Nginx reverse proxy'ni sozlaydi va Let's Encrypt HTTPS sertifikatini oladi.
+- Kundalik zaxira nusxa yaratadi: `/opt/family-store/backups`, 14 kun saqlanadi.
+
+**Serverdagi yo'llar:**
+- Ilova: `/opt/family-store`
+- Sozlamalar: `/opt/family-store/config/application.properties`
+- Loglar: `sudo journalctl -u family-store -f`
