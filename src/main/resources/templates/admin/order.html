@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="uz" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Buyurtma #' + ${order.id})}"></head>
+<body class="admin">
+<header th:replace="~{admin/layout :: nav('orders')}"></header>
+
+<main class="container admin-main">
+  <a th:href="@{/admin/orders}" class="back-link">← Barcha buyurtmalar</a>
+  <th:block th:replace="~{admin/layout :: flash}"></th:block>
+
+  <div class="admin-head">
+    <h1 th:text="'Buyurtma #' + ${order.id}"></h1>
+    <span class="status" th:classappend="'status--' + ${#strings.toLowerCase(order.status)}" th:text="${order.status}"></span>
+  </div>
+
+  <div class="admin-grid">
+    <section class="card">
+      <h3>Mahsulotlar</h3>
+      <table class="table">
+        <thead><tr><th>Mahsulot</th><th>O'lcham</th><th>Soni</th><th>Narx</th><th>Jami</th></tr></thead>
+        <tbody>
+        <tr th:each="it : ${order.items}">
+          <td>
+            <small class="cart-item__brand" th:text="${it.brand}"></small><br>
+            <a th:if="${it.productId != null}" th:href="@{/product/{id}(id=${it.productId})}" target="_blank" th:text="${it.productName}"></a>
+            <span th:unless="${it.productId != null}" th:text="${it.productName}"></span>
+            <br><a th:if="${it.telegramPostId != null}" class="muted small" th:href="${store.postUrl(it.telegramPostId)}" target="_blank" th:text="'Telegram post #' + ${it.telegramPostId}"></a>
+          </td>
+          <td th:text="${it.size}"></td>
+          <td th:text="${it.quantity}"></td>
+          <td class="nowrap" th:text="${@fmt.money(it.unitPrice)}"></td>
+          <td class="nowrap" th:text="${@fmt.money(it.lineTotal())}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="4"><strong>Jami</strong> (+ kargo)</td><td class="nowrap"><strong th:text="${@fmt.money(order.total)}"></strong></td></tr>
+          <tr><td colspan="4">Oldindan to'lov (<span th:text="${store.prepaymentPercent}"></span>%)</td><td class="nowrap" th:text="${@fmt.money(store.prepayment(order.total))}"></td></tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <aside class="card">
+      <h3>Mijoz</h3>
+      <dl class="dl">
+        <dt>Ism</dt><dd th:text="${order.customerName}"></dd>
+        <dt>Telefon</dt><dd><a th:href="'tel:' + ${order.phone}" th:text="${order.phone}"></a></dd>
+        <dt>Manzil</dt><dd th:text="${order.address ?: '—'}"></dd>
+        <dt>Izoh</dt><dd th:text="${order.comment ?: '—'}"></dd>
+        <dt>Til</dt><dd th:text="${order.language}"></dd>
+        <dt>Sana</dt><dd th:text="${@fmt.dateTime(order.createdAt)}"></dd>
+      </dl>
+
+      <h3>Holatni o'zgartirish</h3>
+      <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" class="inline-form">
+        <select name="status">
+          <option th:each="s : ${allStatuses}" th:value="${s}" th:text="${s}" th:selected="${s == order.status}"></option>
+        </select>
+        <button class="btn btn--dark" type="submit">Saqlash</button>
+      </form>
+    </aside>
+  </div>
+</main>
+</body>
+</html>

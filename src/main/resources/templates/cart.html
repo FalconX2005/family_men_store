@@ -1,0 +1,87 @@
+<!doctype html>
+<html th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{cart.title})}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: header}"></th:block>
+
+<main class="page">
+  <div class="container">
+    <h1 class="section__title page__title" th:text="#{cart.title}"></h1>
+
+    <div class="cart-empty-page" th:if="${cart.isEmpty()}">
+      <p class="cart-empty" th:text="#{cart.empty}"></p>
+      <a th:href="@{/} + '#collection'" class="btn btn--dark" th:text="#{cart.continue}"></a>
+    </div>
+
+    <div class="cart-layout" th:unless="${cart.isEmpty()}">
+      <!-- Items -->
+      <div class="cart-list">
+        <div class="cart-item" th:each="line : ${cart.lines()}">
+          <a class="cart-item__img" th:href="@{/product/{id}(id=${line.product().id})}">
+            <img th:src="${line.product().imageUrl}" alt="" th:attr="data-fallback=${line.product().brand}">
+          </a>
+          <div>
+            <p class="cart-item__brand" th:text="${line.product().brand}"></p>
+            <p class="cart-item__name" th:text="${line.product().name(lang)}"></p>
+            <p class="cart-item__meta"><span th:text="#{product.size}"></span>: <span th:text="${line.size()}"></span></p>
+            <div class="cart-item__row">
+              <div class="qty">
+                <form th:action="@{/cart/update}" method="post">
+                  <input type="hidden" name="index" th:value="${line.index()}">
+                  <input type="hidden" name="quantity" th:value="${line.quantity() - 1}">
+                  <button type="submit" aria-label="-">−</button>
+                </form>
+                <span th:text="${line.quantity()}">1</span>
+                <form th:action="@{/cart/update}" method="post">
+                  <input type="hidden" name="index" th:value="${line.index()}">
+                  <input type="hidden" name="quantity" th:value="${line.quantity() + 1}">
+                  <button type="submit" aria-label="+">+</button>
+                </form>
+              </div>
+              <strong class="cart-item__total" th:text="${@fmt.money(line.lineTotal())}"></strong>
+            </div>
+            <form th:action="@{/cart/remove}" method="post">
+              <input type="hidden" name="index" th:value="${line.index()}">
+              <button type="submit" class="cart-item__remove" th:text="#{cart.remove}"></button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkout -->
+      <aside class="checkout">
+        <h2 class="checkout__title" th:text="#{cart.checkout.title}"></h2>
+        <dl class="summary">
+          <dt th:text="#{cart.total}"></dt><dd><strong th:text="${@fmt.money(cart.total())}"></strong></dd>
+          <dt th:text="#{cart.cargo}"></dt><dd class="muted" th:text="#{cart.cargo.value}"></dd>
+          <dt th:text="#{cart.prepay}"></dt><dd><strong class="gold" th:text="${@fmt.money(store.prepayment(cart.total()))}"></strong></dd>
+        </dl>
+
+        <div class="flash flash--error" th:if="${orderLimit}" th:text="#{order.limit}"></div>
+        <form th:action="@{/checkout}" th:object="${checkoutForm}" method="post" class="order-form" novalidate>
+          <div class="field">
+            <input th:field="*{name}" th:placeholder="#{form.name}" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" maxlength="100" required>
+            <small class="field__error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+          </div>
+          <div class="field">
+            <input th:field="*{phone}" type="tel" th:placeholder="#{form.phone}" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" maxlength="20" required>
+            <small class="field__error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
+          </div>
+          <div class="field">
+            <input th:field="*{address}" th:placeholder="#{form.address}" maxlength="300">
+          </div>
+          <div class="field">
+            <textarea th:field="*{comment}" th:placeholder="#{form.comment}" rows="3" maxlength="500"></textarea>
+          </div>
+          <button class="btn btn--dark btn--block" type="submit" th:text="#{cart.checkout.btn}"></button>
+          <p class="checkout__note" th:text="#{cart.delivery.note}"></p>
+        </form>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

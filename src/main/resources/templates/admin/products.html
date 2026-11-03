@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="uz" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Mahsulotlar')}"></head>
+<body class="admin">
+<header th:replace="~{admin/layout :: nav('products')}"></header>
+
+<main class="container admin-main">
+  <th:block th:replace="~{admin/layout :: flash}"></th:block>
+
+  <!-- Telegram sinxronizatsiya paneli -->
+  <section class="card sync-card">
+    <div>
+      <h3>Telegram kanal → sayt</h3>
+      <p>
+        Kanal: <a th:href="${store.channelUrl()}" target="_blank" th:text="'t.me/' + ${store.telegramChannel}"></a>.
+        Har <strong th:text="${store.sync.interval.toMinutes() > 0} ? ${store.sync.interval.toMinutes()} + ' daqiqada' : ${store.sync.interval.toSeconds()} + ' soniyada'">1 daqiqada</strong> yangi postlar avtomatik qo'shiladi,
+        tahrirlangan postlar yangilanadi, o'chirilganlari yashiriladi.
+      </p>
+      <p th:if="${instantListening and botStatus == 'administrator'}">
+        <span class="status status--delivered">⚡ Darhol yangilash yoqilgan</span>
+        Kanalga post qo'yilishi bilan bir necha soniyada saytda chiqadi.
+      </p>
+      <p th:if="${instantListening and botStatus != 'administrator'}" class="muted">
+        Ixtiyoriy: <a href="https://t.me/Falcon_Sbot" target="_blank">@Falcon_Sbot</a> kanalga admin qilinsa, postlar bir necha soniyada chiqadi.
+      </p>
+      <p class="muted">
+        Oxirgi tekshiruv:
+        <span th:text="${sync.time() != null} ? ${@fmt.dateTime(sync.time())} : '—'"></span> ·
+        <span th:classappend="${!sync.ok()} ? 'text-danger'" th:text="${sync.message()}"></span>
+      </p>
+    </div>
+    <div class="sync-card__actions">
+      <form th:action="@{/admin/sync}" method="post">
+        <button class="btn btn--dark" type="submit">Hozir yangilash</button>
+      </form>
+      <form th:action="@{/admin/sync/since}" method="post" class="inline-form">
+        <input type="date" name="date" value="2026-09-01" required>
+        <button class="btn btn--outline-dark" type="submit">Shu sanadan beri yuklash</button>
+      </form>
+      <form th:action="@{/admin/sync/older}" method="post" class="inline-form">
+        <select name="pages">
+          <option value="5">+5 sahifa (~100 post)</option>
+          <option value="10">+10 sahifa (~200 post)</option>
+          <option value="25">+25 sahifa (~500 post)</option>
+        </select>
+        <button class="btn btn--outline-dark" type="submit">Eski postlarni yuklash</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="admin-head">
+    <h1>Mahsulotlar <small class="muted" th:text="'(' + ${products.totalElements} + ')'"></small></h1>
+    <a th:href="@{/admin/products/new}" class="btn btn--dark">+ Qo'lda qo'shish</a>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+      <tr><th></th><th>Brend / Nomi</th><th>Manba</th><th>Narx</th><th>Sana</th><th>Holat</th><th></th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="p : ${products.content}" th:classappend="${!p.active} ? 'is-hidden'">
+        <td><div class="thumb"><img th:src="${p.imageUrl}" alt="" th:attr="data-fallback=${p.brand}" loading="lazy"></div></td>
+        <td>
+          <small class="cart-item__brand" th:text="${p.brand}"></small><br>
+          <span th:text="${p.nameUz}"></span>
+          <br><small class="muted" th:if="${p.category != null}" th:text="${p.category}"></small>
+        </td>
+        <td>
+          <a th:if="${p.fromTelegram()}" th:href="${store.postUrl(p.telegramPostId)}" target="_blank" class="status status--confirmed"
+             th:text="'TG #' + ${p.telegramPostId}"></a>
+          <span th:unless="${p.fromTelegram()}" class="status">Qo'lda</span>
+          <br><small class="muted" th:if="${p.fromTelegram() and !p.telegramSync}">sinxron o'chiq</small>
+        </td>
+        <td class="nowrap">
+          <span th:text="${@fmt.money(p.price)}"></span>
+          <br><s class="muted" th:if="${p.onSale()}" th:text="${@fmt.money(p.oldPrice)}"></s>
+        </td>
+        <td class="nowrap" th:text="${@fmt.date(p.publishedAt)}"></td>
+        <td>
+          <form th:action="@{/admin/products/{id}/toggle(id=${p.id})}" method="post">
+            <button type="submit" class="status" th:classappend="${p.active} ? 'status--delivered' : 'status--cancelled'"
+                    th:text="${p.active} ? 'Faol' : 'Yashirin'"></button>
+          </form>
+        </td>
+        <td class="actions">
+          <a class="link-line" th:href="@{/admin/products/{id}/edit(id=${p.id})}">Tahrirlash</a>
+          <form th:action="@{/admin/products/{id}/delete(id=${p.id})}" method="post"
+                th:attr="data-confirm=${p.fromTelegram()} ? 'Telegram mahsuloti yashiriladi va sinxronizatsiyadan chiqariladi. Davom etasizmi?' : 'Mahsulotni butunlay o\'chirasizmi?'">
+            <button type="submit" class="link-danger">O'chirish</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <p class="empty-state" th:if="${products.isEmpty()}">Hozircha mahsulot yo'q. "Hozir yangilash" tugmasini bosing.</p>
+  </div>
+
+  <nav class="pager" th:if="${products.totalPages > 1}">
+    <a th:if="${products.hasPrevious()}" class="filter" th:href="@{/admin/products(page=${products.number - 1})}">← Oldingi</a>
+    <span class="pager__info" th:text="${products.number + 1} + ' / ' + ${products.totalPages}"></span>
+    <a th:if="${products.hasNext()}" class="filter" th:href="@{/admin/products(page=${products.number + 1})}">Keyingi →</a>
+  </nav>
+</main>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

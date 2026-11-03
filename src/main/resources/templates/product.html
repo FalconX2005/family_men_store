@@ -1,0 +1,89 @@
+<!doctype html>
+<html th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${product.name(lang)})}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: header}"></th:block>
+
+<main class="page">
+  <div class="container">
+    <a th:href="@{/} + '#collection'" class="back-link" th:text="#{product.back}"></a>
+
+    <div class="pdp">
+      <div class="gallery">
+        <div class="pdp__media">
+          <span class="product__tag" th:if="${product.tag != null}" th:text="#{'tag.' + ${product.tag.key()}}"></span>
+          <img id="mainImage" th:src="${product.imageUrl}" th:alt="${product.name(lang)}" th:attr="data-fallback=${product.brand}">
+        </div>
+        <div class="thumbs" th:if="${product.images.size() > 1}">
+          <button type="button" class="thumb-btn" th:each="img, st : ${product.images}"
+                  th:classappend="${st.first} ? 'active'" th:attr="data-src=${img}"
+                  th:aria-label="#{product.photo} + ' ' + ${st.count}">
+            <img th:src="${img}" alt="" loading="lazy" data-nofallback>
+          </button>
+        </div>
+      </div>
+
+      <div class="pdp__info">
+        <p class="eyebrow eyebrow--gold" th:text="${product.brand}"></p>
+        <h1 class="pdp__title" th:text="${product.name(lang)}"></h1>
+        <p class="pdp__price">
+          <th:block th:replace="~{fragments/layout :: price(${product})}"></th:block>
+        </p>
+        <p class="pdp__cargo" th:text="#{price.note}"></p>
+        <p class="pdp__desc" th:if="${product.description(lang) != null}" th:text="${product.description(lang)}"></p>
+
+        <form th:action="@{/cart/add}" method="post" class="pdp__form">
+          <input type="hidden" name="productId" th:value="${product.id}">
+
+          <p class="label" th:text="#{product.size}"></p>
+          <div class="sizes" th:unless="${#lists.isEmpty(product.sizeList())}" th:classappend="${error == 'pick_size'} ? 'sizes--error'">
+            <label th:each="s : ${product.sizeList()}" class="size-option">
+              <input type="radio" name="size" th:value="${s}" required>
+              <span class="size" th:text="${s}"></span>
+            </label>
+          </div>
+          <div class="field size-input" th:if="${#lists.isEmpty(product.sizeList())}">
+            <input name="size" maxlength="20" required th:placeholder="#{product.size.custom}"
+                   th:classappend="${error == 'pick_size'} ? 'is-invalid'">
+            <small class="muted" th:text="#{product.size.hint}"></small>
+          </div>
+
+          <p class="label" th:text="#{product.quantity}"></p>
+          <div class="qty qty--lg" data-qty>
+            <button type="button" data-step="-1">−</button>
+            <input type="number" name="quantity" value="1" min="1" max="20" readonly>
+            <button type="button" data-step="1">+</button>
+          </div>
+
+          <button type="submit" class="btn btn--dark btn--block" th:text="#{product.add}"></button>
+        </form>
+
+        <div class="pdp__social">
+          <a class="btn btn--gold btn--block" th:href="${store.adminUrl()}" target="_blank" rel="noopener" th:text="#{product.ask}"></a>
+          <a class="link-line" th:if="${product.fromTelegram()}" th:href="${store.postUrl(product.telegramPostId)}"
+             target="_blank" rel="noopener" th:text="#{product.post}"></a>
+        </div>
+
+        <ul class="pdp__perks">
+          <li th:text="#{product.perk1}"></li>
+          <li th:text="#{product.perk2}"></li>
+          <li th:text="#{product.perk3}"></li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="related" th:unless="${#lists.isEmpty(related)}">
+      <h2 class="section__title section__title--sm" th:text="#{product.related}"></h2>
+      <div class="product-grid">
+        <th:block th:each="p : ${related}">
+          <article th:replace="~{fragments/layout :: productCard(${p})}"></article>
+        </th:block>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

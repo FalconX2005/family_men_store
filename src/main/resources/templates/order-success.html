@@ -1,0 +1,44 @@
+<!doctype html>
+<html th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{success.title})}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: header}"></th:block>
+
+<main class="page success">
+  <div class="container success__inner">
+    <svg class="success__icon" viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="0.9"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>
+    <p class="eyebrow eyebrow--gold" th:text="#{success.eyebrow}"></p>
+    <h1 class="section__title" th:text="#{success.title}"></h1>
+    <p class="success__number"><span th:text="#{success.number}"></span>: <strong th:text="'#' + ${order.id}"></strong></p>
+
+    <div class="success__summary">
+      <div class="success__row" th:each="it : ${order.items}">
+        <span>
+          <small th:text="${it.brand}"></small>
+          <span th:text="${it.productName}"></span>
+          <em th:text="${it.size} + ' × ' + ${it.quantity}"></em>
+        </span>
+        <span th:text="${@fmt.money(it.lineTotal())}"></span>
+      </div>
+      <div class="success__row success__row--total">
+        <span th:text="#{cart.total}"></span>
+        <strong th:text="${@fmt.money(order.total)} + ' ' + #{price.cargo}"></strong>
+      </div>
+      <div class="success__row success__row--total">
+        <span th:text="#{cart.prepay}"></span>
+        <strong class="gold" th:text="${@fmt.money(store.prepayment(order.total))}"></strong>
+      </div>
+    </div>
+
+    <p class="success__text" th:text="#{success.text}"></p>
+    <div class="footer__links">
+      <a th:href="@{/}" class="btn btn--dark" th:text="#{success.home}"></a>
+      <a th:href="${store.adminUrl()}" class="btn btn--gold" target="_blank" rel="noopener" th:text="'@' + ${store.telegramAdmin}"></a>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

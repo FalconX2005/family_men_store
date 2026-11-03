@@ -1,0 +1,37 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="head(title)">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title} + ' — Admin · Family store for men'">Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</th:block>
+
+<header th:fragment="nav(active)" class="admin-bar">
+  <div class="container admin-bar__inner">
+    <a th:href="@{/admin}" class="logo logo--admin">
+      <span class="logo__main">FAMILY</span><span class="logo__sub">ADMIN PANEL</span>
+    </a>
+    <nav class="admin-nav">
+      <a th:href="@{/admin/orders}" th:classappend="${active == 'orders'} ? 'active'">
+        Buyurtmalar <span class="badge" th:if="${newOrders > 0}" th:text="${newOrders}"></span>
+      </a>
+      <a th:href="@{/admin/products}" th:classappend="${active == 'products'} ? 'active'">Mahsulotlar</a>
+      <a th:href="@{/}" target="_blank">Saytni ochish ↗</a>
+      <form th:action="@{/admin/logout}" method="post"><button type="submit">Chiqish</button></form>
+    </nav>
+  </div>
+</header>
+
+<th:block th:fragment="flash">
+  <div class="flash flash--error" th:if="${defaultPassword}">
+    ⚠ Admin paroli standart (admin123). Xavfsizlik uchun ADMIN_PASSWORD orqali o'zgartiring.
+  </div>
+  <div class="flash" th:if="${message != null}" th:text="${message}"></div>
+</th:block>
+
+</body>
+</html>

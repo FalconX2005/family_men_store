@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="uz" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Kirish')}"></head>
+<body class="admin admin--login">
+<main class="login-box">
+  <div class="logo">
+    <span class="logo__main">FAMILY</span>
+    <span class="logo__sub">ADMIN PANEL</span>
+  </div>
+  <form th:action="@{/admin/login}" method="post" class="order-form">
+    <div class="flash flash--error" th:if="${param.error}">Login yoki parol noto'g'ri</div>
+    <div class="flash flash--error" th:if="${param.blocked}">Juda ko'p noto'g'ri urinish. 15 daqiqadan so'ng qayta urinib ko'ring.</div>
+    <div class="flash" th:if="${param.logout}">Tizimdan chiqdingiz</div>
+    <input name="username" placeholder="Login" autocomplete="username" required autofocus>
+    <input name="password" type="password" placeholder="Parol" autocomplete="current-password" required>
+    <button class="btn btn--dark btn--block" type="submit">Kirish</button>
+  </form>
+</main>
+</body>
+</html>

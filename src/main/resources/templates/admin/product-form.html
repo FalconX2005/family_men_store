@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="uz" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head(${form.id == null} ? 'Yangi mahsulot' : 'Tahrirlash')}"></head>
+<body class="admin">
+<header th:replace="~{admin/layout :: nav('products')}"></header>
+
+<main class="container admin-main">
+  <a th:href="@{/admin/products}" class="back-link">← Mahsulotlar</a>
+  <div class="admin-head">
+    <h1 th:text="${form.id == null} ? 'Yangi mahsulot' : 'Mahsulotni tahrirlash'"></h1>
+    <a th:if="${form.telegramPostId != null}" class="status status--confirmed" target="_blank"
+       th:href="${store.postUrl(form.telegramPostId)}" th:text="'Telegram post #' + ${form.telegramPostId} + ' ↗'"></a>
+  </div>
+
+  <form th:action="@{/admin/products}" th:object="${form}" method="post" enctype="multipart/form-data" class="admin-form">
+    <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{telegramPostId}">
+
+    <div class="flash flash--error" th:if="${#fields.hasGlobalErrors()}">
+      <p th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p>
+    </div>
+
+    <div class="admin-grid">
+      <section class="card">
+        <h3>Asosiy ma'lumotlar</h3>
+
+        <div class="f-row">
+          <label class="f">Brend
+            <input th:field="*{brand}" list="brands" placeholder="Nike">
+            <datalist id="brands">
+              <option>Nike</option><option>Adidas</option><option>Puma</option><option>Jordan</option>
+              <option>New Balance</option><option>Under Armour</option><option>The North Face</option>
+              <option>Tommy Hilfiger</option><option>Calvin Klein</option>
+            </datalist>
+            <small class="field__error" th:errors="*{brand}"></small>
+          </label>
+          <label class="f">Kategoriya (ixtiyoriy)
+            <select th:field="*{category}">
+              <option value="">— tanlanmagan —</option>
+              <option th:each="c : ${allCategories}" th:value="${c}" th:text="#{'category.' + ${c.key()}}"></option>
+            </select>
+          </label>
+        </div>
+
+        <div class="f-row">
+          <label class="f">Nomi (UZ)
+            <input th:field="*{nameUz}" placeholder="Nike Air Max 90">
+            <small class="field__error" th:errors="*{nameUz}"></small>
+          </label>
+          <label class="f">Nomi (RU)
+            <input th:field="*{nameRu}" placeholder="Nike Air Max 90">
+            <small class="field__error" th:errors="*{nameRu}"></small>
+          </label>
+        </div>
+
+        <label class="f">Tavsif (UZ)
+          <textarea th:field="*{descriptionUz}" rows="3"></textarea>
+        </label>
+        <label class="f">Tavsif (RU)
+          <textarea th:field="*{descriptionRu}" rows="3"></textarea>
+        </label>
+
+        <div class="f-row">
+          <label class="f">Narx ($, kargosiz)
+            <input th:field="*{price}" type="number" min="1" step="1" placeholder="85">
+            <small class="field__error" th:errors="*{price}"></small>
+          </label>
+          <label class="f">Asl narx ($, chizilgan — ixtiyoriy)
+            <input th:field="*{oldPrice}" type="number" min="1" step="1" placeholder="165">
+            <small class="field__error" th:errors="*{oldPrice}"></small>
+          </label>
+        </div>
+
+        <div class="f-row">
+          <label class="f">O'lchamlar (vergul bilan, ixtiyoriy)
+            <input th:field="*{sizes}" placeholder="40,41,42,43 yoki S,M,L,XL">
+            <small class="muted">Bo'sh qolsa — mijoz o'lchamini o'zi yozadi</small>
+            <small class="field__error" th:errors="*{sizes}"></small>
+          </label>
+          <label class="f">Belgi
+            <select th:field="*{tag}">
+              <option value="">— yo'q —</option>
+              <option th:each="t : ${allTags}" th:value="${t}" th:text="#{'tag.' + ${t.key()}}"></option>
+            </select>
+          </label>
+        </div>
+
+        <label class="f f--check">
+          <input type="checkbox" th:field="*{active}"> Saytda ko'rsatish
+        </label>
+        <label class="f f--check" th:if="${form.telegramPostId != null}">
+          <input type="checkbox" th:field="*{telegramSync}"> Telegram post bilan sinxron (post tahrirlansa narx/rasmlar yangilanadi)
+        </label>
+      </section>
+
+      <aside class="card">
+        <h3>Rasmlar</h3>
+        <div class="preview-grid" th:with="imgs=${form.imageList()}">
+          <img th:each="u : ${imgs}" th:src="${u}" alt="" data-nofallback>
+        </div>
+        <div class="preview"><img id="preview" alt="" style="display:none"></div>
+        <label class="f">Yangi rasm yuklash (JPG, PNG, WEBP) — asosiy bo'ladi
+          <input type="file" name="image" accept="image/jpeg,image/png,image/webp" id="imageInput">
+        </label>
+        <label class="f">Rasm havolalari (har qatorda bitta, birinchisi asosiy)
+          <textarea th:field="*{imageUrls}" rows="5" placeholder="https://..."></textarea>
+        </label>
+        <button type="submit" class="btn btn--dark btn--block">Saqlash</button>
+      </aside>
+    </div>
+  </form>
+</main>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="uz" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Buyurtmalar')}"></head>
+<body class="admin">
+<header th:replace="~{admin/layout :: nav('orders')}"></header>
+
+<main class="container admin-main">
+  <th:block th:replace="~{admin/layout :: flash}"></th:block>
+  <div class="admin-head">
+    <h1>Buyurtmalar</h1>
+    <span class="muted" th:text="${#lists.size(orders)} + ' ta'"></span>
+  </div>
+
+  <p class="empty-state" th:if="${#lists.isEmpty(orders)}">Hozircha buyurtmalar yo'q.</p>
+
+  <div class="table-wrap" th:unless="${#lists.isEmpty(orders)}">
+    <table class="table">
+      <thead>
+      <tr><th>#</th><th>Sana</th><th>Mijoz</th><th>Telefon</th><th>Mahsulotlar</th><th>Jami</th><th>Holat</th><th></th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="o : ${orders}">
+        <td th:text="${o.id}"></td>
+        <td th:text="${@fmt.dateTime(o.createdAt)}"></td>
+        <td th:text="${o.customerName}"></td>
+        <td><a th:href="'tel:' + ${o.phone}" th:text="${o.phone}"></a></td>
+        <td th:text="${#lists.size(o.items)} + ' ta'"></td>
+        <td class="nowrap" th:text="${@fmt.money(o.total)}"></td>
+        <td><span class="status" th:classappend="'status--' + ${#strings.toLowerCase(o.status)}" th:text="${o.status}"></span></td>
+        <td><a class="link-line" th:href="@{/admin/orders/{id}(id=${o.id})}">Ochish</a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
