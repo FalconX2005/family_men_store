@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import uz.familymens.store.config.SecurityConfig;
 import uz.familymens.store.config.StoreProperties;
 import uz.familymens.store.service.OrderService;
 import uz.familymens.store.service.SiteSettingsService;
@@ -40,7 +39,7 @@ public class SiteDesignController {
     @GetMapping
     public String page(Model model) {
         model.addAttribute("newOrders", orderService.countNew());
-        model.addAttribute("defaultPassword", SecurityConfig.DEFAULT_PASSWORD.equals(store.adminPassword()));
+        model.addAttribute("defaultPassword", !store.adminPasswordSet());
         model.addAttribute("values", settings.all());
         model.addAttribute("texts", SiteSettingsService.TEXTS);
         model.addAttribute("plainValues", SiteSettingsService.VALUES);

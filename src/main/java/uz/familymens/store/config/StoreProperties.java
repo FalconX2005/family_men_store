@@ -61,6 +61,10 @@ public record StoreProperties(
         return (total * prepaymentPercent + 99) / 100;
     }
 
+    public boolean adminPasswordSet() {
+        return adminPassword != null && !adminPassword.isBlank();
+    }
+
     public boolean telegramBotEnabled() {
         return telegramBotToken != null && !telegramBotToken.isBlank()
                 && telegramChatId != null && !telegramChatId.isBlank();

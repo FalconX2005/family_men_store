@@ -42,18 +42,17 @@ public class CartService {
         cart.clear();
     }
 
+    /** Header belgisi uchun son. O'chirilgan/nofaol mahsulotlar avval savatdan olib tashlanadi. */
     public int count() {
+        if (cart.isEmpty()) return 0;
+        pruneInactive();
         return cart.count();
     }
 
-    /** Savatchani bazadagi joriy narxlar bilan hisoblaydi. O'chirilgan mahsulotlar tashlab ketiladi. */
+    /** Savatchani bazadagi joriy narxlar bilan hisoblaydi. O'chirilgan mahsulotlar savatdan olib tashlanadi. */
     public CartView view() {
+        Map<Long, Product> products = pruneInactive();
         List<Cart.Entry> entries = cart.entries();
-        Map<Long, Product> products = productRepository
-                .findAllById(entries.stream().map(Cart.Entry::productId).toList())
-                .stream()
-                .filter(Product::isActive)
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
 
         List<CartLine> lines = new ArrayList<>();
         for (int i = 0; i < entries.size(); i++) {
@@ -64,6 +63,21 @@ public class CartService {
         long total = lines.stream().mapToLong(CartLine::lineTotal).sum();
         int count = lines.stream().mapToInt(CartLine::quantity).sum();
         return new CartView(lines, total, count);
+    }
+
+    /**
+     * Bazada yo'q yoki nofaol mahsulotlarni sessiya savatidan o'chiradi.
+     * @return savatdagi faol mahsulotlar (id bo'yicha)
+     */
+    private Map<Long, Product> pruneInactive() {
+        if (cart.isEmpty()) return Map.of();
+        Map<Long, Product> products = productRepository
+                .findAllById(cart.entries().stream().map(Cart.Entry::productId).distinct().toList())
+                .stream()
+                .filter(Product::isActive)
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+        cart.retainProducts(products.keySet());
+        return products;
     }
 
     public record CartLine(int index, Product product, String size, int quantity) {

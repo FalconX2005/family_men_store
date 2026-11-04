@@ -14,7 +14,7 @@ mvn spring-boot:run
 ```
 
 - Sayt: http://localhost:8150
-- Admin panel: http://localhost:8150/admin (login `admin` / `admin123`, albatta o'zgartiring)
+- Admin panel: http://localhost:8150/admin (login `admin`, parol: `ADMIN_PASSWORD` yoki `config/application.properties` dagi `store.admin-password`; berilmasa vaqtinchalik parol logga yoziladi)
 
 Birinchi ishga tushganda sayt Telegram kanalning oxirgi ~100 postini avtomatik yuklaydi. Bu 1–2 daqiqa davom etadi.
 

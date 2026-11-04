@@ -29,7 +29,7 @@
 
 <th:block th:fragment="flash">
   <div class="flash flash--error" th:if="${defaultPassword}">
-    ⚠ Admin paroli standart (admin123). Xavfsizlik uchun ADMIN_PASSWORD orqali o'zgartiring.
+    ⚠ Admin paroli o'rnatilmagan: vaqtinchalik parol ishlatilmoqda (server logida). ADMIN_PASSWORD orqali doimiy parol o'rnating.
   </div>
   <div class="flash" th:if="${message != null}" th:text="${message}"></div>
 </th:block>

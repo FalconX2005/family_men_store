@@ -17,11 +17,13 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import uz.familymens.store.security.LoginThrottleFilter;
 import uz.familymens.store.security.RateLimiter;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 @Configuration
 public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
-    public static final String DEFAULT_PASSWORD = "admin123";
     private static final String LOGIN_URL = "/admin/login";
 
     /**
@@ -94,13 +96,18 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService users(StoreProperties props, PasswordEncoder encoder) {
-        if (DEFAULT_PASSWORD.equals(props.adminPassword())) {
-            log.warn("⚠ Admin paroli standart ('{}')! ADMIN_PASSWORD muhit o'zgaruvchisi orqali o'zgartiring.",
-                    DEFAULT_PASSWORD);
+        String password = props.adminPassword();
+        if (!props.adminPasswordSet()) {
+            // Kodda standart parol saqlanmaydi: berilmasa, har ishga tushganda tasodifiy parol
+            byte[] bytes = new byte[12];
+            new SecureRandom().nextBytes(bytes);
+            password = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+            log.warn("⚠ ADMIN_PASSWORD berilmagan. Vaqtinchalik admin paroli (faqat shu ishga tushish uchun): {}",
+                    password);
         }
         return new InMemoryUserDetailsManager(
                 User.withUsername(props.adminUsername())
-                        .password(encoder.encode(props.adminPassword()))
+                        .password(encoder.encode(password))
                         .roles("ADMIN")
                         .build());
     }

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Har bir foydalanuvchi sessiyasi uchun alohida savatcha.
@@ -48,6 +49,11 @@ public class Cart implements Serializable {
 
     public synchronized void clear() {
         entries.clear();
+    }
+
+    /** Faqat berilgan (faol) mahsulotlarga tegishli yozuvlarni qoldiradi. */
+    public synchronized void retainProducts(Set<Long> activeIds) {
+        entries.removeIf(e -> !activeIds.contains(e.productId));
     }
 
     public synchronized List<Entry> entries() {

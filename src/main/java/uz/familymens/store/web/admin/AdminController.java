@@ -44,8 +44,7 @@ public class AdminController {
         model.addAttribute("allCategories", Category.values());
         model.addAttribute("allTags", ProductTag.values());
         model.addAttribute("allStatuses", OrderStatus.values());
-        model.addAttribute("defaultPassword",
-                uz.familymens.store.config.SecurityConfig.DEFAULT_PASSWORD.equals(store.adminPassword()));
+        model.addAttribute("defaultPassword", !store.adminPasswordSet());
     }
 
     @GetMapping("/login")
